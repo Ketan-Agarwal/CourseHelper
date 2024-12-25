@@ -2,9 +2,10 @@
 import {useState} from 'react';
 import Button from '@mui/material/Button';
 import styles from '@/app/ui/cards.module.css';
-import { Dialog, DialogTitle, DialogContent, TextField, DialogActions, Input } from '@mui/material';
-import { MuiFileInput } from 'mui-file-input';
-export default function AddCourse() {
+import { Dialog, DialogTitle, DialogContent, TextField, DialogActions,  } from '@mui/material';
+import { createCourse } from '../lib/api';
+
+export default function AddCourse({ onCourseAdded }: {onCourseAdded: (newCourse: any) => void}) {
     const [openAdd, setOpenAdd] = useState(false); // State to control dialog open/close
     const [formData, setFormData] = useState({
       courseName: '',
@@ -12,10 +13,9 @@ export default function AddCourse() {
       credits: '',
       profName: '',
       description: '',
-      image: null as File | null
+      image: ''
     });
   
-    // Function to handle input changes
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const { name, value } = e.target;
       setFormData(prevState => ({
@@ -23,12 +23,48 @@ export default function AddCourse() {
         [name]: value
       }));
     };
-    const handleSubmitAdd = () => {
+    const handleSubmitAdd = async() => {
+        if (!validateForm()) {
+            return;
+          }
       console.log('Adding Course:', formData);
-
+      try {
+        const newCourse = await createCourse({
+          courseName: formData.courseName,
+          courseCode: formData.courseCode,
+          credits: Number(formData.credits),
+          profName: formData.profName,
+          description: formData.description,
+          imageURL: formData.image
+        });
+        onCourseAdded(newCourse);
+        console.log('Course added successfully');
+        handleCloseAdd();
+      } catch (error) {
+        console.error('Error adding course:', error);
+      }
+  
+    
       handleCloseAdd(); // Close the dialog after submit
     };
-  
+
+        
+
+    const [errors, setErrors] = useState<{ [key: string]: string }>({}); // State to store form validation errors
+   const validateForm = () => {
+    const newErrors: { [key: string]: string } = {};
+    if (!formData.courseName.trim()) newErrors.courseName = 'Course Name is required';
+    if (!formData.courseCode.trim()) newErrors.courseCode = 'Course Code is required';
+    if (!formData.profName.trim()) newErrors.profName = 'Professor Name is required';
+    if (!formData.description.trim()) newErrors.description = 'Description is required';
+    if (!formData.credits.trim() || isNaN(Number(formData.credits)) || Number(formData.credits) <= 0) {
+      newErrors.credits = 'Credits must be a positive integer';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
     // Function to handle dialog close
     const handleCloseAdd = () => {
       setOpenAdd(false);
@@ -38,8 +74,9 @@ export default function AddCourse() {
         credits: '',
         profName: '',
         description: '',
-        image: null
+        image: ''
       });
+      setErrors({});
     };
   
     // Function to handle dialog open
@@ -53,60 +90,72 @@ export default function AddCourse() {
 <Dialog open={openAdd} onClose={handleCloseAdd}>
   <DialogTitle>Add New Course</DialogTitle><br/>
   <DialogContent>
-    <TextField
-      label="Course Name"
-      variant="outlined"
-      fullWidth
-      name="courseName"
-      value={formData.courseName}
-      onChange={handleInputChange}
-      sx={{ marginBottom: 2 }}
-    />
-    <TextField
-      label="Course Code"
-      variant="outlined"
-      fullWidth
-      name="courseCode"
-      value={formData.courseCode}
-      onChange={handleInputChange}
-      sx={{ marginBottom: 2 }}
-    />
-    <TextField
-      label="Credits"
-      variant="outlined"
-      fullWidth
-      name="credits"
-      value={formData.credits}
-      onChange={handleInputChange}
-      sx={{ marginBottom: 2 }}
-    />
-    <TextField
-      label="Professor Name"
-      variant="outlined"
-      fullWidth
-      name="profName"
-      value={formData.profName}
-      onChange={handleInputChange}
-      sx={{ marginBottom: 2 }}
-    />
-    <TextField
-      label="Description"
-      variant="outlined"
-      fullWidth
-      name="description"
-      value={formData.description}
-      onChange={handleInputChange}
-      sx={{ marginBottom: 2 }}
-    />
-    <TextField
-    label="ImageURL"
-    variant="outlined"
-    fullWidth
-    name="description"
-    value={formData.image}
-    onChange={handleInputChange}
-    sx={{ marginBottom: 2 }}
-  />
+  <TextField
+            label="Course Name"
+            variant="outlined"
+            fullWidth
+            name="courseName"
+            value={formData.courseName}
+            onChange={handleInputChange}
+            error={!!errors.courseName}
+            helperText={errors.courseName}
+            sx={{ marginBottom: 2 }}
+          />
+          <TextField
+            label="Course Code"
+            variant="outlined"
+            fullWidth
+            name="courseCode"
+            value={formData.courseCode}
+            onChange={handleInputChange}
+            error={!!errors.courseCode}
+            helperText={errors.courseCode}
+            sx={{ marginBottom: 2 }}
+          />
+          <TextField
+            label="Credits"
+            variant="outlined"
+            fullWidth
+            name="credits"
+            value={formData.credits}
+            onChange={handleInputChange}
+            error={!!errors.credits}
+            helperText={errors.credits}
+            sx={{ marginBottom: 2 }}
+          />
+          <TextField
+            label="Professor Name"
+            variant="outlined"
+            fullWidth
+            name="profName"
+            value={formData.profName}
+            onChange={handleInputChange}
+            error={!!errors.profName}
+            helperText={errors.profName}
+            sx={{ marginBottom: 2 }}
+          />
+          <TextField
+            label="Description"
+            variant="outlined"
+            fullWidth
+            name="description"
+            value={formData.description}
+            onChange={handleInputChange}
+            error={!!errors.description}
+            helperText={errors.description}
+            sx={{ marginBottom: 2 }}
+          />
+          <TextField
+            label="Image URL"
+            variant="outlined"
+            fullWidth
+            name="image"
+            value={formData.image}
+            onChange={handleInputChange}
+            error={!!errors.image}
+            helperText={errors.image}
+            sx={{ marginBottom: 2 }}
+          />
   </DialogContent>
   <DialogActions>
     <Button onClick={handleCloseAdd} color="primary">

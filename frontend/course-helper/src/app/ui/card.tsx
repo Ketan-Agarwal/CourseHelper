@@ -12,15 +12,24 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import IconButton from '@mui/material/IconButton';
 import TextField from '@mui/material/TextField';
 import DeleteIcon from '@mui/icons-material/Delete';
-import Box from '@mui/material/Box';
-import {clsx} from 'clsx';
+import { deleteCourse } from '../lib/api';
 import DialogContentText from '@mui/material/DialogContentText';
+import { Alert } from '@mui/material';
+import { updateCourse } from '../lib/api';
 
-
-export default function MultiActionAreaCard(props: { imageURL: string; courseName: string; courseCode: string; credits:number; profName: string; description: string; }) {
+type Course = {
+    id: number;
+    imageURL: string;
+    courseName: string;
+    courseCode: string;
+    credits: number;
+    profName: string;
+    description: string;
+  };
+  
+export default function MultiActionAreaCard(props: { id: number; imageURL: string; courseName: string; courseCode: string; credits:number; profName: string; description: string; onDeleteCourse: (id: number,courseCode: string) => void; onCourseUpdate: (updatedCourse: Course) => void;}) {
 const [open, setOpen] = React.useState(false);
 const [openUpdate, setOpenUpdate] = React.useState(false);
 const [formData, setFormData] = React.useState({
@@ -28,7 +37,8 @@ const [formData, setFormData] = React.useState({
     courseCode: props.courseCode,
     credits: props.credits,
     profName: props.profName,
-    description: props.description
+    description: props.description,
+    imageURL: props.imageURL
   });
   const [openDelete, setDeleteOpen] = React.useState(false);
 
@@ -37,13 +47,34 @@ const [formData, setFormData] = React.useState({
   };
 
   const handleDeleteClose = () => {
-    setDeleteOpen(false);
+    try {
+        deleteCourse(props.id);
+        props.onDeleteCourse(props.id, props.courseCode);
+        setDeleteOpen(false);
+    } catch (error) {
+      setDeleteOpen(false);
+    }
   };
+
   const handleClickOpen = () => {
     setOpen(true);
   };
   const handleClickOpenUpdate = () => {
     setOpenUpdate(true);
+  };
+  const [errors, setErrors] = React.useState<{ [key: string]: string }>({});
+  const validateForm = () => {
+    const newErrors: { [key: string]: string } = {};
+    if (!formData.courseName.trim()) newErrors.courseName = 'Course Name is required';
+    if (!formData.courseCode.trim()) newErrors.courseCode = 'Course Code is required';
+    if (!formData.profName.trim()) newErrors.profName = 'Professor Name is required';
+    if (!formData.description.trim()) newErrors.description = 'Description is required';
+    if (!formData.credits || isNaN(Number(formData.credits)) || Number(formData.credits) <= 0) {
+      newErrors.credits = 'Credits must be a positive integer';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
   const handleClose = () => {
     setOpen(false);
@@ -58,10 +89,27 @@ const [formData, setFormData] = React.useState({
       [name]: value
     }));
   };
-  const handleSubmit = () => {
-    console.log('Updated data:', formData);
-    handleCloseUpdate();
-  };
+  const handleSubmit = async() => {
+      if (!validateForm()) {
+          return;
+        }
+        console.log('form not validated')
+  try {
+    const newCourse = await updateCourse(props.id, {
+      courseName: formData.courseName,
+      courseCode: formData.courseCode,
+      credits: Number(formData.credits),
+      profName: formData.profName,
+      description: formData.description,
+      imageURL: formData.imageURL
+    });
+    props.onCourseUpdate(newCourse);
+  } catch (error) {
+  }
+handleCloseUpdate();
+};
+  
+  
   return (
     <Card sx={{ maxWidth: 435 }} className={styles.card}>
       <CardActionArea onClick={handleClickOpen}>
@@ -69,7 +117,7 @@ const [formData, setFormData] = React.useState({
           component="img"
           height="140"
           image={props.imageURL}
-          alt="Course Image"  sx={{
+          alt={props.courseName}  sx={{
             objectFit: 'cover',
             height: '140px',
             width: '100%',
@@ -166,6 +214,15 @@ const [formData, setFormData] = React.useState({
             onChange={handleInputChange}
             sx={{ marginBottom: 2 }}
           />
+          <TextField
+          label="ImageURL"
+          variant="outlined"
+          fullWidth
+          name="imageURL"
+          value={formData.imageURL}
+          onChange={handleInputChange}
+          sx={{ marginBottom: 2 }}
+        />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseUpdate} color="primary">
@@ -178,7 +235,7 @@ const [formData, setFormData] = React.useState({
       </Dialog>
       <Dialog
         open={openDelete}
-        onClose={handleDeleteClose}
+        onClose={()=>setDeleteOpen(false)}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
@@ -186,9 +243,9 @@ const [formData, setFormData] = React.useState({
             Delete this course? ({props.courseCode})
         </DialogTitle>
         <DialogActions>
-          <Button onClick={handleDeleteClose}>Disagree</Button>
+          <Button onClick={()=>setDeleteOpen(false)}>No</Button>
           <Button onClick={handleDeleteClose} autoFocus>
-            Agree
+            Yes
           </Button>
         </DialogActions>
       </Dialog>
