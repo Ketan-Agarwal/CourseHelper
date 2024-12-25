@@ -1,0 +1,28 @@
+/* Cards.module.css */
+.cards {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 16px; /* Space between cards */
+    padding: 20px;
+}
+
+.card {
+    width: 500px;
+    justify-content: space-between;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    background-color: #fff; /* White background */
+    transition: transform 0.3s, box-shadow 0.3s !important; /* Smooth hover effects */
+}
+
+.card:hover {
+    transform: translateY(-5px); /* Slightly lift the card on hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
+}
+
+
+.addButton{
+    position: fixed;
+    bottom: 30;
+    right: 30;
+}
