@@ -13,9 +13,6 @@ const fetchAPI = async (endpoint: string, options: RequestInit = {}) => {
   if (contentType && contentType.includes('application/json')) {
 
     return await res.json();
-  } else {
-    const text = await res.text();
-    throw new Error(`Unexpected response: ${text}`);
   }
 };
 

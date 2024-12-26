@@ -8,7 +8,7 @@ import { FormControlLabel, Checkbox } from '@mui/material';
 
 const LoginForm = () => {
   const [formData, setFormData] = useState({
-    username: '',
+    rollnumber: '',
     password: '',
     rememberMe: false
   });
@@ -33,7 +33,7 @@ const LoginForm = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // Add your login logic here (e.g., API call to authenticate user)
-    if (formData.username === 'user' && formData.password === 'password') {
+    if (formData.rollnumber === 'user' && formData.password === 'password') {
       // Successful login, navigate to home page or dashboard
     } else {
       // Handle invalid login
@@ -53,7 +53,7 @@ const LoginForm = () => {
             fullWidth
             margin="normal"
             name="rollnumber"
-            value={formData.username}
+            value={formData.rollnumber}
             onChange={handleInputChange}
             required
           />

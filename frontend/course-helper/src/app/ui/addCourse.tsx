@@ -156,10 +156,10 @@ export default function AddCourse({ onCourseAdded }: {onCourseAdded: (newCourse:
           />
   </DialogContent>
   <DialogActions>
-    <Button onClick={handleCloseAdd} color="primary">
+    <Button onClick={handleCloseAdd} variant="outlined" color="primary">
       Cancel
     </Button>
-    <Button onClick={handleSubmitAdd} color="primary">
+    <Button onClick={handleSubmitAdd} variant="contained" color="primary">
       Add Course
     </Button>
   </DialogActions>

@@ -6,7 +6,8 @@ import { getCourses } from '../lib/api';
 import { useEffect, useState } from 'react';
 import { Alert } from '@mui/material';
 import { Snackbar } from '@mui/material';
-export default function Cards(){
+import { Box } from '@mui/material';
+export default function Cards({searchQuery}: {searchQuery: string}){
     const [courses, setCourses] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 const [openAlert, setOpenAlert] = useState(false);
@@ -38,18 +39,33 @@ const [alertMessage, setAlertMessage] = useState('');
       const handleCourseUpdate = (newCourseData: { id: number; courseName: string; courseCode: string; credits: number; description: string; imageURL: string; profName: string }) => {
         setCourses(prevCourses => prevCourses.map((course) => course.id === newCourseData.id ? { ...course, ...newCourseData} : course))
       }
+      const filteredCourses = courses.filter(course =>
+        course.courseName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        course.courseCode.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        course.profName.toLowerCase().includes(searchQuery.toLowerCase())
+      );
       
       if (loading) {
-        return <p>Loading courses...</p>;
+        return <p className={styles.centerAlert}>Loading courses...</p>;
+      }
+      if(filteredCourses.length == 0){
+        return(
+            <>
+            <p className={styles.centerAlert}>No courses</p>
+            <AddButton onCourseAdded={handleCourseAdded}/>
+            </>
+        )
       }
         return (<div>
             <AddButton onCourseAdded={handleCourseAdded}/>
+            <Box sx={{ paddingTop: { xs: '56px', sm: '71px' } }}>
             <div className={styles.cards}>
-            {courses.map((course) => (
-        <Card id={course.id} courseName={course.courseName} imageURL={course.imageURL} courseCode={course.courseCode} profName={course.profName} credits={course.credits} description={course.description} onDeleteCourse={handleCourseDeleted} onCourseUpdate={handleCourseUpdate}/>
+            {filteredCourses.map((course) => (
+        <Card key={course.id} id={course.id} courseName={course.courseName} imageURL={course.imageURL} courseCode={course.courseCode} profName={course.profName} credits={course.credits} description={course.description} onDeleteCourse={handleCourseDeleted} onCourseUpdate={handleCourseUpdate}/>
               
             ))}
-        </div><Snackbar open={openAlert} autoHideDuration={6000} onClose={handleCloseAlert}>
+        </div>
+        </Box><Snackbar open={openAlert} autoHideDuration={6000} onClose={handleCloseAlert}>
         <Alert onClose={handleCloseAlert} severity={alertMessage.includes('Failed') ? 'error' : 'success'} variant="filled">
           {alertMessage}
         </Alert>

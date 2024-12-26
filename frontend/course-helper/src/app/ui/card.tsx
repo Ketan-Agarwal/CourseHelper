@@ -18,6 +18,7 @@ import { deleteCourse } from '../lib/api';
 import DialogContentText from '@mui/material/DialogContentText';
 import { Alert } from '@mui/material';
 import { updateCourse } from '../lib/api';
+import { Box } from '@mui/material';
 
 type Course = {
     id: number;
@@ -134,10 +135,13 @@ setOpenUpdate(false);
         <CardMedia
           component="img"
           height="140"
-          image={props.imageURL}
-          alt={props.courseName}  sx={{
+          alt={props.courseName}
+          image={props.imageURL} sx={{
             objectFit: 'cover',
+            display: 'flex',
             height: '140px',
+            justifyContent: 'center',            
+            alignItems: 'center',
             width: '100%',
           }}
         />
@@ -243,10 +247,10 @@ setOpenUpdate(false);
         />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseUpdate} color="primary">
+          <Button onClick={handleCloseUpdate} color="primary"variant="outlined">
             Cancel
           </Button>
-          <Button onClick={handleSubmit} color="primary">
+          <Button onClick={handleSubmit} color="primary" variant="contained">
             Update
           </Button>
         </DialogActions>
