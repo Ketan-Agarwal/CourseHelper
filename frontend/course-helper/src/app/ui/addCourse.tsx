@@ -27,7 +27,6 @@ export default function AddCourse({ onCourseAdded }: {onCourseAdded: (newCourse:
         if (!validateForm()) {
             return;
           }
-      console.log('Adding Course:', formData);
       try {
         const newCourse = await createCourse({
           courseName: formData.courseName,
@@ -38,7 +37,6 @@ export default function AddCourse({ onCourseAdded }: {onCourseAdded: (newCourse:
           imageURL: formData.image
         });
         onCourseAdded(newCourse);
-        console.log('Course added successfully');
         handleCloseAdd();
       } catch (error) {
         console.error('Error adding course:', error);

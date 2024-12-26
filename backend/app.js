@@ -38,7 +38,6 @@ app.post('/courses', async (req, res) => {
     if (!courseName || !courseCode || !credits || !profName || !description) {
         return res.status(400).json({ success: false, message: 'All fields are required' , data: courseCode});
       }
-    console.log(req.body)
         const result = await pool.query(
             'INSERT INTO courses ("courseName", "imageURL", "courseCode", "profName", "credits", "description") VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
             [courseName, imageURL, courseCode, profName, credits, description]

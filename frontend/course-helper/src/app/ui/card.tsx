@@ -60,6 +60,16 @@ const [formData, setFormData] = React.useState({
     setOpen(true);
   };
   const handleClickOpenUpdate = () => {
+    setFormData({
+        courseName: props.courseName,
+        courseCode: props.courseCode,
+        credits: props.credits,
+        profName: props.profName,
+        description: props.description,
+        imageURL: props.imageURL
+      });
+      setErrors({});
+setOpenUpdate(false);
     setOpenUpdate(true);
   };
   const [errors, setErrors] = React.useState<{ [key: string]: string }>({});
@@ -93,7 +103,6 @@ const [formData, setFormData] = React.useState({
       if (!validateForm()) {
           return;
         }
-        console.log('form not validated')
   try {
     const newCourse = await updateCourse(props.id, {
       courseName: formData.courseName,
@@ -104,9 +113,18 @@ const [formData, setFormData] = React.useState({
       imageURL: formData.imageURL
     });
     props.onCourseUpdate(newCourse);
-  } catch (error) {
-  }
-handleCloseUpdate();
+    setFormData({
+        courseName: newCourse.courseName,
+        courseCode: newCourse.courseCode,
+        credits: newCourse.credits,
+        profName: newCourse.profName,
+        description: newCourse.description,
+        imageURL: newCourse.imageURL
+      });
+      setErrors({});
+    handleCloseUpdate();
+} catch (error) {
+}
 };
   
   

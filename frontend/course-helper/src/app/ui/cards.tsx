@@ -15,7 +15,6 @@ const [alertMessage, setAlertMessage] = useState('');
         const fetchCourses = async () => {
           try {
             const data = await getCourses();
-            console.log(data);
             setCourses(data);
           } catch (error) {
             console.error('Failed to fetch courses:', error);
@@ -27,7 +26,6 @@ const [alertMessage, setAlertMessage] = useState('');
         fetchCourses();
       }, []);
       const handleCourseAdded = (newCourse: any) => {
-        console.log(newCourse);
         setCourses(prevCourses => [...prevCourses, newCourse]);
       };
       const handleCourseDeleted = (deletedCourseId: number, courseCode: string) => {          

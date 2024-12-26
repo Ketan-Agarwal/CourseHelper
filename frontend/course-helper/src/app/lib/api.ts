@@ -33,7 +33,6 @@ export const createCourse = async (courseData: {
   description: string;
   imageURL?: string;
 }) => {
-    console.log(courseData);
   return await fetchAPI('/courses', {
     method: 'POST',
     body: JSON.stringify(courseData),
