@@ -116,7 +116,7 @@ const LoginForm = () => {
           </Button>
           
           <Typography variant="body2" align="center" sx={{ marginTop: 2 }}>
-        Don't have an account?
+        Don&#39;t have an account?
         <Link href="/register">
           Sign Up
         </Link>
