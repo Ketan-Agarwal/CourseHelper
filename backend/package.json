@@ -10,3 +10,7 @@
     "pnpm": "^9.15.1"
   }
 }
+"scripts": {
+  "build": "tsc",
+  "start": "node dist/index.js"
+}
