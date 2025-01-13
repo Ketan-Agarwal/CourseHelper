@@ -19,7 +19,7 @@ app.use(express.json());
 app.use("/courses", coursesRoutes);
 app.use('/auth', authRoutes);
 
-// app.get("/", (req, res) => res.send("Backend is running!"));
+app.get("/", (req, res) => res.send("Backend is running!"));
 
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
