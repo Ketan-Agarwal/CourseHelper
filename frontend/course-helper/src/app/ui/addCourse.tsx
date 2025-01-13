@@ -1,12 +1,21 @@
 'use client';
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import Button from '@mui/material/Button';
 import styles from '@/app/ui/cards.module.css';
-import { Dialog, DialogTitle, DialogContent, TextField, DialogActions,  } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, TextField, DialogActions, Alert, Snackbar,  } from '@mui/material';
 import { createCourse } from '../lib/api';
 
 export default function AddCourse({ onCourseAdded }: {onCourseAdded: (newCourse: any) => void}) {
-    const [openAdd, setOpenAdd] = useState(false); // State to control dialog open/close
+    const [openAdd, setOpenAdd] = useState(false);
+    const [jwtToken, setJwtToken] = useState('');
+    const [alertMessage, setAlertMessage] = useState('');
+    const [openAlert, setOpenAlert] = useState(false);
+  useEffect(() => {
+      const token = localStorage.getItem('jwtToken') || '';
+      setJwtToken(token);
+  }, []);
+
+
     const [formData, setFormData] = useState({
       courseName: '',
       courseCode: '',
@@ -15,6 +24,9 @@ export default function AddCourse({ onCourseAdded }: {onCourseAdded: (newCourse:
       description: '',
       image: ''
     });
+    const handleCloseAlert = () => {
+      setOpenAlert(false);
+    };
   
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const { name, value } = e.target;
@@ -28,7 +40,7 @@ export default function AddCourse({ onCourseAdded }: {onCourseAdded: (newCourse:
             return;
           }
       try {
-        const newCourse = await createCourse({
+        const newCourse = await createCourse(jwtToken, {
           courseName: formData.courseName,
           courseCode: formData.courseCode,
           credits: Number(formData.credits),
@@ -43,12 +55,12 @@ export default function AddCourse({ onCourseAdded }: {onCourseAdded: (newCourse:
       }
   
     
-      handleCloseAdd(); // Close the dialog after submit
+      handleCloseAdd(); 
     };
 
         
 
-    const [errors, setErrors] = useState<{ [key: string]: string }>({}); // State to store form validation errors
+    const [errors, setErrors] = useState<{ [key: string]: string }>({});
    const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
     if (!formData.courseName.trim()) newErrors.courseName = 'Course Name is required';
@@ -63,7 +75,6 @@ export default function AddCourse({ onCourseAdded }: {onCourseAdded: (newCourse:
     return Object.keys(newErrors).length === 0;
   };
 
-    // Function to handle dialog close
     const handleCloseAdd = () => {
       setOpenAdd(false);
       setFormData({
@@ -77,9 +88,14 @@ export default function AddCourse({ onCourseAdded }: {onCourseAdded: (newCourse:
       setErrors({});
     };
   
-    // Function to handle dialog open
     const handleOpenAdd = () => {
+      if (!jwtToken){
+        setAlertMessage("Please login to add a course.");
+        setOpenAlert(true);
+        return;
+      }
       setOpenAdd(true);
+      return;
     };
   return (<>
       <div className={styles.addButton}>
@@ -164,7 +180,11 @@ export default function AddCourse({ onCourseAdded }: {onCourseAdded: (newCourse:
     </Button>
   </DialogActions>
 </Dialog>
-
+<Snackbar open={openAlert} autoHideDuration={3000} onClose={handleCloseAlert}>
+        <Alert onClose={handleCloseAlert} severity='error' variant="filled">
+          {alertMessage}
+        </Alert>
+      </Snackbar>
       </>
   );
 }

@@ -1,28 +1,32 @@
 'use server';
 const BASE_URL = 'http://localhost:3001';
+const fetchAPI = async (endpoint: string, jwtToken: string, options: RequestInit = {}) => {
+  // Retrieve JWT token from localStorage
+  const headers = {
+    'Content-Type': 'application/json',
+    ...options.headers,
+    ...(jwtToken ? { Authorization: `Bearer ${jwtToken}` } : {}),
+  };
 
-const fetchAPI = async (endpoint: string, options: RequestInit = {}) => {
   const res = await fetch(`${BASE_URL}${endpoint}`, {
     ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
+    headers,
   });
+
   const contentType = res.headers.get('Content-Type');
   if (contentType && contentType.includes('application/json')) {
-
     return await res.json();
   }
+  return res; // Return response if not JSON
 };
 
 export const getCourses = async () => {
-  return await fetchAPI('/courses', {
+  return await fetchAPI('/courses', "", {
     method: 'GET',
   });
 };
 
-export const createCourse = async (courseData: {
+export const createCourse = async (token: any, courseData: {
   courseName: string;
   courseCode: string;
   credits: number;
@@ -30,13 +34,13 @@ export const createCourse = async (courseData: {
   description: string;
   imageURL?: string;
 }) => {
-  return await fetchAPI('/courses', {
+  return await fetchAPI('/courses', token, {
     method: 'POST',
     body: JSON.stringify(courseData),
   });
 };
 
-export const updateCourse = async (id: number, courseData: {
+export const updateCourse = async (id: number, token: any, courseData: {
   courseName: string;
   courseCode: string;
   credits: number;
@@ -44,14 +48,14 @@ export const updateCourse = async (id: number, courseData: {
   description: string;
   imageURL?: string;
 }) => {
-  return await fetchAPI(`/courses/${id}`, {
+  return await fetchAPI(`/courses/${id}`, token, {
     method: 'PUT',
     body: JSON.stringify(courseData),
   });
 };
 
-export const deleteCourse = async (id: number) => {
-  return await fetchAPI(`/courses/${id}`, {
+export const deleteCourse = async (id: number, token: any) => {
+  return await fetchAPI(`/courses/${id}`, token, {
     method: 'DELETE',
   });
 };

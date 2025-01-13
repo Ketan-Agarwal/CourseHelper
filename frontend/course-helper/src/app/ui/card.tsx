@@ -16,10 +16,10 @@ import TextField from '@mui/material/TextField';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { deleteCourse } from '../lib/api';
 import DialogContentText from '@mui/material/DialogContentText';
-import { Alert } from '@mui/material';
+import { Alert, Snackbar } from '@mui/material';
 import { updateCourse } from '../lib/api';
 import { Box } from '@mui/material';
-
+import { useState, useEffect } from 'react';
 type Course = {
     id: number;
     imageURL: string;
@@ -32,6 +32,17 @@ type Course = {
   
 export default function MultiActionAreaCard(props: { id: number; imageURL: string; courseName: string; courseCode: string; credits:number; profName: string; description: string; onDeleteCourse: (id: number,courseCode: string) => void; onCourseUpdate: (updatedCourse: Course) => void;}) {
 const [open, setOpen] = React.useState(false);
+// const jwtToken = typeof window !== 'undefined' ? localStorage.getItem('jwtToken') : null;
+const [jwtToken, setJwtToken] = useState('');
+
+  useEffect(() => {
+      const token = localStorage.getItem('jwtToken') || '';
+      setJwtToken(token);
+    
+  }, []);
+const [openAlert, setOpenAlert] = useState(false);
+const [alertMessage, setAlertMessage] = useState('');
+
 const [openUpdate, setOpenUpdate] = React.useState(false);
 const [formData, setFormData] = React.useState({
     courseName: props.courseName,
@@ -44,12 +55,17 @@ const [formData, setFormData] = React.useState({
   const [openDelete, setDeleteOpen] = React.useState(false);
 
   const handleClickDeleteOpen = () => {
+    if (!jwtToken){
+      setAlertMessage("Please login to delete a course.");
+      setOpenAlert(true);
+      return;
+    }
     setDeleteOpen(true);
   };
 
   const handleDeleteClose = () => {
     try {
-        deleteCourse(props.id);
+        deleteCourse(props.id, jwtToken);
         props.onDeleteCourse(props.id, props.courseCode);
         setDeleteOpen(false);
     } catch (error) {
@@ -60,7 +76,16 @@ const [formData, setFormData] = React.useState({
   const handleClickOpen = () => {
     setOpen(true);
   };
+  const handleCloseAlert = () => {
+    setOpenAlert(false);
+  };
   const handleClickOpenUpdate = () => {
+    
+    if (!jwtToken){
+      setAlertMessage("Please login to update a course.");
+      setOpenAlert(true);
+      return;
+    }
     setFormData({
         courseName: props.courseName,
         courseCode: props.courseCode,
@@ -105,7 +130,7 @@ setOpenUpdate(false);
           return;
         }
   try {
-    const newCourse = await updateCourse(props.id, {
+    const newCourse = await updateCourse(props.id, jwtToken, {
       courseName: formData.courseName,
       courseCode: formData.courseCode,
       credits: Number(formData.credits),
@@ -159,12 +184,12 @@ setOpenUpdate(false);
         </CardContent>
       </CardActionArea>
       <CardActions>
-      <Button size="small" color="primary" variant='contained' onClick={handleClickOpenUpdate}>
+      {jwtToken ? <><Button size="small" color="primary" variant='contained' onClick={handleClickOpenUpdate}>
           Update
         </Button>
         <Button size="small" color="warning" variant='contained'onClick={handleClickDeleteOpen} startIcon={<DeleteIcon />}>
           Delete
-        </Button>
+        </Button></> : ''}
       </CardActions>
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>{formData.courseName}</DialogTitle>
@@ -271,6 +296,11 @@ setOpenUpdate(false);
           </Button>
         </DialogActions>
       </Dialog>
+      <Snackbar open={openAlert} autoHideDuration={6000} onClose={handleCloseAlert}>
+              <Alert onClose={handleCloseAlert} severity='error' variant="filled">
+                {alertMessage}
+              </Alert>
+            </Snackbar>
     </Card>
   );
 }

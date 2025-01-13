@@ -1,21 +1,37 @@
 'use client';
-import React, { useState } from 'react';
-import { TextField, Button, Box, Typography, Container } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { TextField, Button, Typography } from '@mui/material';
 import LockOutlined from '@mui/icons-material/LockOutlined';
 import styles from './loginform.module.css';
 import { FormControlLabel, Checkbox } from '@mui/material';
-
-
+// import Link from '@mui/material';
+import axios from 'axios';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { getDecodedToken } from '../lib/decode';
 const LoginForm = () => {
+  const router = useRouter();
+
+
+  useEffect(() => {
+    const token = localStorage.getItem('jwtToken');
+    if (token) {
+      const decoded = getDecodedToken(token);
+      if (decoded) {
+        router.push('/');
+      }
+    }
+  }, [router]);
+
+
   const [formData, setFormData] = useState({
-    rollnumber: '',
+    username: '',
     password: '',
     rememberMe: false
   });
 
   const [error, setError] = useState('');
 
-  // Handle form data change
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prevState => ({
@@ -29,31 +45,39 @@ const LoginForm = () => {
       rememberMe: e.target.checked
     }));
   };
-  // Handle form submission
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Add your login logic here (e.g., API call to authenticate user)
-    if (formData.rollnumber === 'user' && formData.password === 'password') {
-      // Successful login, navigate to home page or dashboard
-    } else {
-      // Handle invalid login
+    try {
+      const response = await axios.post("http://localhost:3001/auth/login", formData);
+
+      if (response.status === 200) {
+        const { token } = response.data;
+
+            localStorage.setItem("jwtToken", token);
+            router.push('/');
+        
+      }
+    } catch (error: any) {
       setError('Invalid username or password');
+      
     }
   };
 
   return (
-    <div className={styles.formWrapper}>
+    <div>
+        <form onSubmit={handleSubmit} className={styles.formWrapper}>
+
         <LockOutlined className={styles.icon}/>
         <Typography variant='h5' className={styles.title}>
             Course Helper
         </Typography>
         <TextField
-            label="Roll Number"
+            label="Username"
             variant="outlined"
             fullWidth
             margin="normal"
-            name="rollnumber"
-            value={formData.rollnumber}
+            name="username"
+            value={formData.username}
             onChange={handleInputChange}
             required
           />
@@ -80,6 +104,7 @@ const LoginForm = () => {
           label="Remember Me"
           sx={{ marginBottom: 2 }}
         />
+        {error && <Typography color="error">{error}</Typography>}
           <Button
             type="submit"
             variant="contained"
@@ -89,6 +114,15 @@ const LoginForm = () => {
           >
             Login
           </Button>
+          
+          <Typography variant="body2" align="center" sx={{ marginTop: 2 }}>
+        Don't have an account?{' '}
+        <Link href="/register">
+          Sign Up
+        </Link>
+      </Typography>
+          </form>
+          
     </div>
   );
 };

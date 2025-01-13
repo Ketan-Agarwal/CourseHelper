@@ -38,7 +38,9 @@ const [alertMessage, setAlertMessage] = useState('');
       };
       const handleCourseUpdate = (newCourseData: { id: number; courseName: string; courseCode: string; credits: number; description: string; imageURL: string; profName: string }) => {
         setCourses(prevCourses => prevCourses.map((course) => course.id === newCourseData.id ? { ...course, ...newCourseData} : course))
-      }
+        setAlertMessage(`Course (${newCourseData.courseCode}) updated successfully!`);
+        setOpenAlert(true);
+    };
       const filteredCourses = courses.filter(course =>
         course.courseName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         course.courseCode.toLowerCase().includes(searchQuery.toLowerCase()) ||

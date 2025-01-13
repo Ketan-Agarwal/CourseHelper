@@ -1,7 +1,9 @@
 body{
     background: url(../../../public/wallpaper.jpg);
     background-repeat: no-repeat;
-    background-size: cover;
+    background-size:cover;
+    /* background-position: 100%; */
+
 }
 .formWrapper{
     background-color: white;
