@@ -48,7 +48,7 @@ const LoginForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:3001/auth/login", formData);
+      const response = await axios.post("https://course-helper-back.vercel.app/auth/login", formData);
 
       if (response.status === 200) {
         const { token } = response.data;

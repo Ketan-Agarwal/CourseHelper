@@ -54,7 +54,7 @@ const [openAlert, setOpenAlert] = useState(false);
     }
     try {
         
-        const response = await axios.post("http://localhost:3001/auth/register", formData);
+        const response = await axios.post("https://course-helper-back.vercel.app/auth/register", formData);
         if (response.status === 201) {
             setAlertMessage("Registered Successfully! Please Login!")
             setOpenAlert(true);

@@ -1,5 +1,5 @@
 'use server';
-const BASE_URL = 'http://localhost:3001';
+const BASE_URL = 'https://course-helper-back.vercel.app';
 const fetchAPI = async (endpoint: string, jwtToken: string, options: RequestInit = {}) => {
   // Retrieve JWT token from localStorage
   const headers = {
