@@ -12,3 +12,9 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+/* global.css */
+body {
+  background: url(../../public/wallpaper.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
