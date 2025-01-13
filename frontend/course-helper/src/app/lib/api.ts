@@ -26,7 +26,7 @@ export const getCourses = async () => {
   });
 };
 
-export const createCourse = async (token: any, courseData: {
+export const createCourse = async (token: string, courseData: {
   courseName: string;
   courseCode: string;
   credits: number;
@@ -40,7 +40,7 @@ export const createCourse = async (token: any, courseData: {
   });
 };
 
-export const updateCourse = async (id: number, token: any, courseData: {
+export const updateCourse = async (id: number, token: string, courseData: {
   courseName: string;
   courseCode: string;
   credits: number;
@@ -54,7 +54,7 @@ export const updateCourse = async (id: number, token: any, courseData: {
   });
 };
 
-export const deleteCourse = async (id: number, token: any) => {
+export const deleteCourse = async (id: number, token: string) => {
   return await fetchAPI(`/courses/${id}`, token, {
     method: 'DELETE',
   });

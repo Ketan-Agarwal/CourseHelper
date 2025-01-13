@@ -15,10 +15,8 @@ import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { deleteCourse } from '../lib/api';
-import DialogContentText from '@mui/material/DialogContentText';
 import { Alert, Snackbar } from '@mui/material';
 import { updateCourse } from '../lib/api';
-import { Box } from '@mui/material';
 import { useState, useEffect } from 'react';
 type Course = {
     id: number;
