@@ -1,7 +1,7 @@
 'use client';
 import styles from './cards.module.css';
 import Card from './card';
-import AddButton from '@/app/ui/addCourse';
+import AddButton from './addCourse';
 import { getCourses } from '../lib/api';
 import { useEffect, useState } from 'react';
 import { Alert } from '@mui/material';
