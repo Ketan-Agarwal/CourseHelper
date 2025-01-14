@@ -50,6 +50,12 @@ export default function AddCourse({ onCourseAdded }: {onCourseAdded: (newCourse:
           description: formData.description,
           imageURL: formData.image
         });
+        if (newCourse.status === 403){
+        setAlertMessage('Login Expired. Please login again.');
+        setOpenAlert(true);
+        setLoading(false);
+        }
+        
         onCourseAdded(newCourse);
         setLoading(false);
         handleCloseAdd();

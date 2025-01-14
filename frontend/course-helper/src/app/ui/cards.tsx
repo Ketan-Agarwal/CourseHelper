@@ -36,7 +36,7 @@ const [alertMessage, setAlertMessage] = useState('');
     
         fetchCourses();
       }, []);
-      const handleCourseAdded = (newCourse: any) => {
+      const handleCourseAdded = (newCourse: { id: number; courseName: string; courseCode: string; credits: number; description: string; imageURL: string; profName: string }) => {
         setCourses(prevCourses => [...prevCourses, newCourse]);
       };
       const handleCourseDeleted = (deletedCourseId: number, courseCode: string) => {          
