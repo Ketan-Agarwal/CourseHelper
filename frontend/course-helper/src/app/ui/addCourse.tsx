@@ -1,20 +1,21 @@
 'use client';
 import {useState, useEffect} from 'react';
 import Button from '@mui/material/Button';
-import styles from '@/app/ui/cards.module.css';
-import { Dialog, DialogTitle, DialogContent, TextField, DialogActions, Alert, Snackbar,  } from '@mui/material';
+import styles from './cards.module.css';
+import { Dialog, DialogTitle, DialogContent, TextField, DialogActions, Alert, Snackbar } from '@mui/material';
 import { createCourse } from '../lib/api';
+import CircularProgress from '@mui/material/CircularProgress';
 
-export default function AddCourse({ onCourseAdded }: {onCourseAdded: (newCourse: any) => void}) {
+export default function AddCourse({ onCourseAdded }: {onCourseAdded: (newCourse: object) => void}) {
     const [openAdd, setOpenAdd] = useState(false);
     const [jwtToken, setJwtToken] = useState('');
     const [alertMessage, setAlertMessage] = useState('');
     const [openAlert, setOpenAlert] = useState(false);
+    const [loading, setLoading] = useState(false);
   useEffect(() => {
       const token = localStorage.getItem('jwtToken') || '';
       setJwtToken(token);
   }, []);
-
 
     const [formData, setFormData] = useState({
       courseName: '',
@@ -40,6 +41,7 @@ export default function AddCourse({ onCourseAdded }: {onCourseAdded: (newCourse:
             return;
           }
       try {
+        setLoading(true);
         const newCourse = await createCourse(jwtToken, {
           courseName: formData.courseName,
           courseCode: formData.courseCode,
@@ -49,9 +51,14 @@ export default function AddCourse({ onCourseAdded }: {onCourseAdded: (newCourse:
           imageURL: formData.image
         });
         onCourseAdded(newCourse);
+        setLoading(false);
         handleCloseAdd();
       } catch (error) {
         console.error('Error adding course:', error);
+        setAlertMessage('Failed to add course.');
+        setOpenAlert(true);
+        setLoading(false);
+        
       }
   
     
@@ -98,7 +105,8 @@ export default function AddCourse({ onCourseAdded }: {onCourseAdded: (newCourse:
       return;
     };
   return (<>
-      <div className={styles.addButton}>
+  
+  <div className={styles.addButton}>
       <Button variant="contained" onClick={handleOpenAdd}>Add Course</Button>
       </div>
 <Dialog open={openAdd} onClose={handleCloseAdd}>
@@ -172,12 +180,11 @@ export default function AddCourse({ onCourseAdded }: {onCourseAdded: (newCourse:
           />
   </DialogContent>
   <DialogActions>
-    <Button onClick={handleCloseAdd} variant="outlined" color="primary">
+    { loading ? <CircularProgress/> : (<><Button onClick={handleCloseAdd} variant="outlined" color="primary">
       Cancel
-    </Button>
-    <Button onClick={handleSubmitAdd} variant="contained" color="primary">
+    </Button> <Button onClick={handleSubmitAdd} variant="contained" color="primary">
       Add Course
-    </Button>
+    </Button></>)}
   </DialogActions>
 </Dialog>
 <Snackbar open={openAlert} autoHideDuration={3000} onClose={handleCloseAlert}>

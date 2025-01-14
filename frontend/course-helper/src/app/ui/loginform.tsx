@@ -4,14 +4,14 @@ import { TextField, Button, Typography } from '@mui/material';
 import LockOutlined from '@mui/icons-material/LockOutlined';
 import styles from './loginform.module.css';
 import { FormControlLabel, Checkbox } from '@mui/material';
-// import Link from '@mui/material';
+import CircularProgress from '@mui/material/CircularProgress';
 import axios from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { getDecodedToken } from '../lib/decode';
 const LoginForm = () => {
   const router = useRouter();
-
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('jwtToken');
@@ -47,6 +47,7 @@ const LoginForm = () => {
   };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const response = await axios.post("https://course-helper-back.vercel.app/auth/login", formData);
 
@@ -54,12 +55,13 @@ const LoginForm = () => {
         const { token } = response.data;
 
             localStorage.setItem("jwtToken", token);
+            setLoading(false);
             router.push('/');
         
       }
-    } catch (error: any) {
+    } catch {
       setError('Invalid username or password');
-      
+      setLoading(false);
     }
   };
 
@@ -105,18 +107,18 @@ const LoginForm = () => {
           sx={{ marginBottom: 2 }}
         />
         {error && <Typography color="error">{error}</Typography>}
-          <Button
+          
+            {loading ? <CircularProgress/> :<Button
             type="submit"
             variant="contained"
             color="primary"
             sx={{ marginTop: 2 }}
             fullWidth
-          >
-            Login
-          </Button>
+          > Login </Button>}
+          
           
           <Typography variant="body2" align="center" sx={{ marginTop: 2 }}>
-        Don&#39;t have an account?
+        Don&#39;t have an account?{`  `}
         <Link href="/register">
           Sign Up
         </Link>

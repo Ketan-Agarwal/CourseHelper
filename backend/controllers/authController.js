@@ -14,7 +14,7 @@ const registerUser = async (req, res) => {
         res.status(201).json({ message: 'User registered successfully' });
     } catch (error) {
         if (error.code === '23505') {
-            return res.status(400).json({ message: 'Username already exists' });
+            return res.status(400).json({ message: 'Username/email already exists' });
         }
         res.status(500).json({ message: error.message });
     }

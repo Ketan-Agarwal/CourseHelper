@@ -18,6 +18,7 @@ import { deleteCourse } from '../lib/api';
 import { Alert, Snackbar } from '@mui/material';
 import { updateCourse } from '../lib/api';
 import { useState, useEffect } from 'react';
+import CircularProgress from '@mui/material/CircularProgress';
 type Course = {
     id: number;
     imageURL: string;
@@ -40,7 +41,7 @@ const [jwtToken, setJwtToken] = useState('');
   }, []);
 const [openAlert, setOpenAlert] = useState(false);
 const [alertMessage, setAlertMessage] = useState('');
-
+const [loading, setLoading] = useState(false);
 const [openUpdate, setOpenUpdate] = React.useState(false);
 const [formData, setFormData] = React.useState({
     courseName: props.courseName,
@@ -64,10 +65,11 @@ const [formData, setFormData] = React.useState({
   const handleDeleteClose = () => {
     try {
         deleteCourse(props.id, jwtToken);
-        props.onDeleteCourse(props.id, props.courseCode);
+        props.onDeleteCourse(props.id, props.courseCode)
         setDeleteOpen(false);
-    } catch (error) {
+    } catch (error){
       setDeleteOpen(false);
+      console.log(error);
     }
   };
 
@@ -92,11 +94,11 @@ const [formData, setFormData] = React.useState({
         description: props.description,
         imageURL: props.imageURL
       });
-      setErrors({});
+      // setErrors({});
 setOpenUpdate(false);
     setOpenUpdate(true);
   };
-  const [errors, setErrors] = React.useState<{ [key: string]: string }>({});
+  // const [errors, setErrors] = React.useState<{ [key: string]: string }>({});
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
     if (!formData.courseName.trim()) newErrors.courseName = 'Course Name is required';
@@ -107,7 +109,7 @@ setOpenUpdate(false);
       newErrors.credits = 'Credits must be a positive integer';
     }
 
-    setErrors(newErrors);
+    // setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
   const handleClose = () => {
@@ -128,6 +130,7 @@ setOpenUpdate(false);
           return;
         }
   try {
+    setLoading(true);
     const newCourse = await updateCourse(props.id, jwtToken, {
       courseName: formData.courseName,
       courseCode: formData.courseCode,
@@ -145,9 +148,14 @@ setOpenUpdate(false);
         description: newCourse.description,
         imageURL: newCourse.imageURL
       });
-      setErrors({});
+      // setErrors({});
+      setLoading(false);
     handleCloseUpdate();
-} catch (error) {
+}
+catch (error){
+  console.log(error)
+  setAlertMessage('Failed to update course.')
+  setOpenAlert(true);
 }
 };
   
@@ -270,12 +278,12 @@ setOpenUpdate(false);
         />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseUpdate} color="primary"variant="outlined">
+          { loading ? <CircularProgress/> : (<><Button onClick={handleCloseUpdate} color="primary"variant="outlined">
             Cancel
           </Button>
           <Button onClick={handleSubmit} color="primary" variant="contained">
             Update
-          </Button>
+          </Button></>)}
         </DialogActions>
       </Dialog>
       <Dialog

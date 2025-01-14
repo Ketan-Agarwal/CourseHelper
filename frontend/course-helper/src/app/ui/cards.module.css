@@ -1,35 +1,35 @@
-/* Cards.module.css */
 .cards {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    gap: 16px; /* Space between cards */
+    gap: 16px;
     padding: 20px;
 }
 
 .card {
     width: 500px;
     justify-content: space-between;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    background-color: #fff; /* White background */
-    transition: transform 0.3s, box-shadow 0.3s !important; /* Smooth hover effects */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    transition: transform 0.3s, box-shadow 0.3s !important;
 }
 
 .card:hover {
-    transform: translateY(-5px); /* Slightly lift the card on hover */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 
 .addButton{
     position: fixed;
-    bottom: 30;
-    z-index: 100;
-    right: 30;
+    z-index: 1001;
+    bottom: 30px;
+    right: 30px;
 }
 
 .centerAlert{
     position: fixed;
+    color: white !important;
     font-size: 30px;
     top: 50%;
     left: 50%;

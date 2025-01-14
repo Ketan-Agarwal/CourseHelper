@@ -3,7 +3,7 @@ interface DecodedToken {
     exp: number;
   }
   
-  const parseJwt = <T = any>(token: string | null): T | null => {
+  const parseJwt = <T = string>(token: string | null): T | null => {
     if (!token) {
       return null;
     }

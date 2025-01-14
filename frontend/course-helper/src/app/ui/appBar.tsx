@@ -8,6 +8,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import InputBase from '@mui/material/InputBase';
 import SearchIcon from '@mui/icons-material/Search';
+import LogoutIcon from '@mui/icons-material/Logout';
 import { useRouter } from 'next/navigation';
 import { getDecodedToken } from '../lib/decode';
 const Search = styled('div')(({ theme }) => ({
@@ -51,7 +52,6 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function PrimarySearchAppBar({
-    searchQuery,
     setSearchQuery,
   }: {
     searchQuery: string;
@@ -92,9 +92,8 @@ export default function PrimarySearchAppBar({
         <Toolbar>
           <Typography
             variant="h6"
-            noWrap
             component="div"
-            sx={{ display: { xs: 'none', sm: 'block' } }}
+            sx={{ display: { xs: 'block', sm: 'block' } }}
           >
             Course Helper
           </Typography>
@@ -109,9 +108,9 @@ export default function PrimarySearchAppBar({
             />
           </Search>
           <Box sx={{ flexGrow: 1 }} />
-          <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
+          <Box sx={{ display: { xs: 'block', md: 'flex' }, fontSize: { xs: '20px !important' } }}>
           <Typography variant="h6" color="inherit">
-              {username ? `Hello, ${username}` :  (
+              {username ? `Hi, ${username}` :  (
               <span
                 style={{ cursor: 'pointer' }}  // Add pointer cursor to indicate it's clickable
                 onClick={handleLoginClick}
@@ -122,7 +121,7 @@ export default function PrimarySearchAppBar({
             </Typography>
 
             <Typography variant="h6" color="inherit" sx={{ cursor: 'pointer', marginLeft: '12px' }} onClick={handleLoginLogout}>
-              {username ? `Logout?` : ''}
+              {username ? <LogoutIcon/> : ''}
             </Typography>
           </Box>
         </Toolbar>

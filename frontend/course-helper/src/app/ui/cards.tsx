@@ -7,8 +7,18 @@ import { useEffect, useState } from 'react';
 import { Alert } from '@mui/material';
 import { Snackbar } from '@mui/material';
 import { Box } from '@mui/material';
+
+interface Course {
+  id: number;
+  courseName: string;
+  courseCode: string;
+  credits: number;
+  description: string;
+  imageURL: string;
+  profName: string;
+}
 export default function Cards({searchQuery}: {searchQuery: string}){
-    const [courses, setCourses] = useState<any[]>([]);
+    const [courses, setCourses] = useState<Course[]>([]);
     const [loading, setLoading] = useState(true);
 const [openAlert, setOpenAlert] = useState(false);
 const [alertMessage, setAlertMessage] = useState('');
