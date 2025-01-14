@@ -6,7 +6,7 @@ import { Dialog, DialogTitle, DialogContent, TextField, DialogActions, Alert, Sn
 import { createCourse } from '../lib/api';
 import CircularProgress from '@mui/material/CircularProgress';
 
-export default function AddCourse({ onCourseAdded }: {onCourseAdded: (newCourse: object) => void}) {
+export default function AddCourse({ onCourseAdded }: {onCourseAdded: (newCourse: any) => void}) {
     const [openAdd, setOpenAdd] = useState(false);
     const [jwtToken, setJwtToken] = useState('');
     const [alertMessage, setAlertMessage] = useState('');
