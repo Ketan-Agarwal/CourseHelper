@@ -53,13 +53,12 @@ export default function AddCourse({ onCourseAdded }: {onCourseAdded: (newCourse:
           description: formData.description,
           imageURL: formData.image
         });
-        if (newCourse.error === 'invalid signature'){
+        if (newCourse.error === 'invalid signature' || newCourse.error === 'jwt expired'){
         setLoading(false);
         localStorage.setItem('jwtToken','');
         router.push('/login');
         return;
         }
-        
         onCourseAdded(newCourse);
         setLoading(false);
         handleCloseAdd();

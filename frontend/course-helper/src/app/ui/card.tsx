@@ -67,7 +67,7 @@ const [formData, setFormData] = React.useState({
     try {
         const deleted = deleteCourse(props.id, jwtToken);
         deleted.then((data) => {
-          if (data.error === 'invalid signature'){
+          if (data.error === 'invalid signature' || data.error === 'jwt expired'){
             localStorage.setItem('jwtToken', '');
             router.push('/login');
             return;
@@ -155,7 +155,7 @@ setOpenUpdate(false);
       imageURL: formData.imageURL
     });
     console.log(newCourse);
-    if (newCourse.error === 'invalid signature'){
+    if (newCourse.error === 'invalid signature' || newCourse.error === 'jwt expired'){
       setLoading(false);
       setOpenUpdate(false);
       localStorage.setItem('jwtToken', '');
