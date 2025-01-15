@@ -36,8 +36,9 @@ export default function AddCourse({ onCourseAdded }: {onCourseAdded: (newCourse:
         [name]: value
       }));
     };
-    const handleSubmitAdd = async() => {
-        if (!validateForm()) {
+    const handleSubmitAdd = async(e: React.FormEvent) => {
+      e.preventDefault();  
+      if (!validateForm()) {
             return;
           }
       try {
@@ -54,6 +55,7 @@ export default function AddCourse({ onCourseAdded }: {onCourseAdded: (newCourse:
         setAlertMessage('Login Expired. Please login again.');
         setOpenAlert(true);
         setLoading(false);
+        return;
         }
         
         onCourseAdded(newCourse);
@@ -61,14 +63,13 @@ export default function AddCourse({ onCourseAdded }: {onCourseAdded: (newCourse:
         handleCloseAdd();
       } catch (error) {
         console.error('Error adding course:', error);
-        setAlertMessage('Failed to add course.');
+        setAlertMessage('Failed to add course. Try adding or login again.');
         setOpenAlert(true);
         setLoading(false);
         
       }
   
     
-      handleCloseAdd(); 
     };
 
         
