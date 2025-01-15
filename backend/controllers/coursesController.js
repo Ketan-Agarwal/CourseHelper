@@ -41,7 +41,7 @@ const deleteCourse = async (req, res) => {
     const { id } = req.params;
     try {
         await db.query('DELETE FROM public.courses WHERE id = $1', [id]);
-        res.status(200).send('Course deleted');
+        res.json({ message: 'Course deleted', id: id });
     } catch (err) {
         console.error(err);
         res.status(500).send('Server error');

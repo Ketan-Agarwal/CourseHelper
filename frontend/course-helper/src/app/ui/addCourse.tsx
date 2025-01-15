@@ -5,8 +5,10 @@ import styles from './cards.module.css';
 import { Dialog, DialogTitle, DialogContent, TextField, DialogActions, Alert, Snackbar } from '@mui/material';
 import { createCourse } from '../lib/api';
 import CircularProgress from '@mui/material/CircularProgress';
+import { useRouter } from 'next/navigation';
 
 export default function AddCourse({ onCourseAdded }: {onCourseAdded: (newCourse: any) => void}) {
+    const router = useRouter();
     const [openAdd, setOpenAdd] = useState(false);
     const [jwtToken, setJwtToken] = useState('');
     const [alertMessage, setAlertMessage] = useState('');
@@ -51,10 +53,10 @@ export default function AddCourse({ onCourseAdded }: {onCourseAdded: (newCourse:
           description: formData.description,
           imageURL: formData.image
         });
-        if (newCourse.status === 403){
-        setAlertMessage('Login Expired. Please login again.');
-        setOpenAlert(true);
+        if (newCourse.error === 'invalid signature'){
         setLoading(false);
+        localStorage.setItem('jwtToken','');
+        router.push('/login');
         return;
         }
         

@@ -28,6 +28,8 @@ const [alertMessage, setAlertMessage] = useState('');
             const data = await getCourses();
             setCourses(data);
           } catch (error) {
+            setAlertMessage('Failed to get courses. Please try again.')
+            setOpenAlert(true);
             console.error('Failed to fetch courses:', error);
           } finally {
             setLoading(false);

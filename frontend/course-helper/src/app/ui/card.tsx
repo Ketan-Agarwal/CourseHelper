@@ -19,6 +19,7 @@ import { Alert, Snackbar } from '@mui/material';
 import { updateCourse } from '../lib/api';
 import { useState, useEffect } from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
+import { useRouter } from 'next/navigation';
 type Course = {
     id: number;
     imageURL: string;
@@ -31,7 +32,7 @@ type Course = {
   
 export default function MultiActionAreaCard(props: { id: number; imageURL: string; courseName: string; courseCode: string; credits:number; profName: string; description: string; onDeleteCourse: (id: number,courseCode: string) => void; onCourseUpdate: (updatedCourse: Course) => void;}) {
 const [open, setOpen] = React.useState(false);
-// const jwtToken = typeof window !== 'undefined' ? localStorage.getItem('jwtToken') : null;
+const router = useRouter();
 const [jwtToken, setJwtToken] = useState('');
 
   useEffect(() => {
@@ -64,9 +65,23 @@ const [formData, setFormData] = React.useState({
 
   const handleDeleteClose = () => {
     try {
-        deleteCourse(props.id, jwtToken);
-        props.onDeleteCourse(props.id, props.courseCode)
-        setDeleteOpen(false);
+        const deleted = deleteCourse(props.id, jwtToken);
+        deleted.then((data) => {
+          if (data.error === 'invalid signature'){
+            localStorage.setItem('jwtToken', '');
+            router.push('/login');
+            return;
+          }
+          if (data.error){
+            setAlertMessage('Unexpected error occured. Please try again.')
+            setOpenAlert(true);
+          }
+          props.onDeleteCourse(props.id, props.courseCode)
+          setDeleteOpen(false);
+        }).catch((error) => {
+          console.error('Error deleting course:', error);
+          setDeleteOpen(false);
+        });
     } catch (error){
       setDeleteOpen(false);
       console.log(error);
@@ -139,6 +154,14 @@ setOpenUpdate(false);
       description: formData.description,
       imageURL: formData.imageURL
     });
+    console.log(newCourse);
+    if (newCourse.error === 'invalid signature'){
+      setLoading(false);
+      setOpenUpdate(false);
+      localStorage.setItem('jwtToken', '');
+      router.push('/login');
+      return;
+    }
     props.onCourseUpdate(newCourse);
     setFormData({
         courseName: newCourse.courseName,
@@ -155,6 +178,7 @@ setOpenUpdate(false);
 catch (error){
   console.log(error)
   setAlertMessage('Failed to update course.')
+  setLoading(false);
   setOpenAlert(true);
 }
 };
